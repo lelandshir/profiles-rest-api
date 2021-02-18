@@ -33,10 +33,14 @@
 
 1. This assumes git is installed
 
-1. Install Virtualbox: `https://www.virtualbox.org/wiki/Downloads` (OS X hosts)
-1. Install Vagrant: `https://www.vagrantup.com/downloads` (MAC OS X); Check in terminal with `vagrant --version` to see something like `Vagrant 2.2.14`
+1. InstalL Vrtualbox: `https://www.virtualbox.org/wiki/Downloads` (OS X hosts)
+1. Install Vagrant: `https://www.vagrantup.com/downloads` (MAC OS X); Check In terminal with `vagrant --version` to See something like `Vagrant 2.2.14`
 1. ModHeader: `https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en`
-1. `git init, touch readme, .gitignore`:(gitignore)[https://gist.github.com/LondonAppDev/dd166e24f69db4404102161df02a63ff] - (standard .gitignore for a python vagrant project)
-1. Create License File: (License File)[https://choosealicense.com/licenses/mit/] - to make it clear to others what they can do with this code if they were to reuse it, and to protect yourself from a lawsuit.
+1. `git init, touch readme, .gitignore`:[gitignore](https://gist.github.com/LondonAppDev/dd166e24f69db4404102161df02a63ff) - (standard .gitignore for a python vagrant project)
+1. Create License File: [License File]("https://choosealicense.com/licenses/mit/") - to make it clear to others what they can do with this code if they were to reuse it, and to protect yourself from a lawsuit.
+1. `git add .`, `git commit -am'first commit'`
+1. ➜ `ls ~/.ssh` Generate an SSH Key: `ssh-keygen -t rsa 4096 -C "lelandshir@gmail.com"`: this runs the SSH Key Generation Tool. The command says "Create a new key that is an RSA type, is 4,096 bytes, with a comment so that you can ID what the key is for if you need to. Press enter to generate the key/pair, and enter again to save it in it's default path (recommended). Create a passphrase for the key as an extra layer of security against web crawlers. They can't use the key w/o a passphrase if they do steal it.
+1. `cat ~/.ssh/id_rsa.pub` to grab key and head to gitHub to add it.
+1. Create new repo, git remote add origin (configure path), git branch -M main,
 
 # Profiles REST API
