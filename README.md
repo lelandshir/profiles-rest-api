@@ -68,7 +68,7 @@
 ### Install required Python Packages
 
 1. `touch requirements.txt`
-1. This is where to list all the packages needed and the specfic versions to use. It's good practice to pin dependencies w/ a version, otherwise the latest version will be installed. There could be an update that breaks your project! [Python Packages](https://pypi.org/)
-1.
+1. This is where to list all the packages needed and the specfic versions to use. It's good practice to pin dependencies w/ a version, otherwise the latest version will be installed. There could be an update that breaks your project! [Versions: Python Packages](https://pypi.org/)
+1. After adding the requirements, connect to the vagrant server and be sure the virtual environment is activated. Install the requirements by running: `pip install -r requirements.txt `
 
 # Profiles REST API
