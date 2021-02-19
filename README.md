@@ -48,4 +48,27 @@
 
 - `vagrant init ubuntu/bionic64` : init project w/ new vagrant file and bases it on ubuntu/bionic64 base image, [Vagrantfile](https://gist.github.com/LondonAppDev/199eef145a21587ea866b69d40d28682)
 
+1. Run `vagrant up` to download base image specified in Vagrantfile, then uses VB to create a new VM and run the provisioning script when it starts the VM. We can then use our dev server and connect to it.
+1. Once the VM is created, connect to it: `vagrant ssh` command using ssh, disconnect from the machine by typing `exit`
+1. The dev server is a VM, by default the file system is not sync'd. Files on DS are diff from files on local machine. Vagrant creates a sync'd directory on our the Vagrant server that updates itself every time we make changes.
+
+### Create Python Virtual Environment
+
+1. In Vagrant server, cd into `/vagrant` directory
+1. Create a PVE with Python 3 by running `python -m venv ~/env` --This path is in the home directory of the Vagrant Server (as opposed to the Vagrant folder which is sync'd to our local machine). We create the Python Virtual Environment and its dependencies here because we do not want it to sync with our local machines.
+
+#### Activating and deactivating the Virtual Environment with Python
+
+1. VE's need to be actived and deactivated
+1. When activated, all dependencies run through the Python application will be pulled from the Virtual Environment instead of the base OS.
+1. activate by running `source ~/env/bin/activate` - this is the path to the activate script within the environment
+1. You'll know you're in the virtual environment because the name of the VE you're working on will prefix itself to the CL input.
+1. deactivate by running `deactivate`
+
+### Install required Python Packages
+
+1. `touch requirements.txt`
+1. This is where to list all the packages needed and the specfic versions to use. It's good practice to pin dependencies w/ a version, otherwise the latest version will be installed. There could be an update that breaks your project! [Python Packages](https://pypi.org/)
+1.
+
 # Profiles REST API
