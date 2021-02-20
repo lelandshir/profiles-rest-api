@@ -229,6 +229,10 @@ class UserProfileManager():
 1. Goes through Django Project and creates all required models/tables in the DB for any models and dependenices you have
 - That is how you create and manage changes 
 
+### 6. Setup Django Admin
+- Enable the Django Adminon the project. A useful tool that lets you create an admin site for your project where you can inspect, manage and see your DB models
+- You need to create a super user to do this, using the Command Line Tool
+
 
 
 ## Profiles REST API
