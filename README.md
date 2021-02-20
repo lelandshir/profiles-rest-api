@@ -108,16 +108,16 @@
 1. Each model maps to a table in the DB, Django handles the relationships between models and the db so that we don't have to use SL to interact with the DB directly
 
 #### User Profile Model
-1. Out of the box, Django comes with a default user model used for the standard auth system and Django Admin. We'll override this model with a custom model that allows for use of an email address instead of the standard username that comes with the Django default model
-1. Best Practice: Keep all DB models in `models.py` within the app
+1. Out of the box, Django comes with a default user model used for the standard authentication system and Django Admin. We can override this model with a custom model that allows for use of an email address instead of the standard username that comes with the Django default model.
+1. Best Practice: Keep all DB models in `models.py` within the app directory
 1. In `models.py`:
 - `from django.contrib.auth.models import AbstractBaseUser`
-- `from django.contrib.models import PermissionMixin`
-- Based on the docs, these are the standard base classes needed to override or customize the default user Django model
+- `from django.contrib.auth.models import PermissionsMixin`
+- Based on the docs, these are the standard base classes needed to override or customize the default user Django model... Next, the UserProfile Model:
 ```
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Database model for users in the system"""
-    # the python standard for writing a doc string to explain what the class is and does
+    # the abive is the python standard for writing a doc string to explain what the class is/does
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     # Fields for permission system
@@ -142,7 +142,16 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         return self.email
 ```
 
-
+#### Explaining The Code:
+1. Created a UserProfile class and passed in the `AbstractBaseUser` and `PermissionsMixin` which allow customization of the default Django User Model as needed; then defined the required fields for the model. Note that `email` and `name` will become columns on the UserProfile Database Table.
+1. Added fields for the permissions system; `is_active` (allows us to deactivate users if needed), and `is_staff` (to determine if user is a staff user which determines access level).
+1. Required: Django needs to have a custom model manger for the user model so it knows how to create and control users using the django command line tools
+1. Specified a `USERNAME` field because we are overriding the `USERNAME` field by having users provide their email address and password when being authenticated rather than their username and password. The USERNAME field is required by default, we've simply switched it to be the email that is required instead. 
+1. Specified additional `REQUIRED_FIELDS` list and added `name`. This says that at minimum the user must also give their name.
+1. Added functions that are used for django to interact with the custom user model; "getters". 
+- `Note`: When defining a function within a class we must pass `self` in as the first argument. This is the default python convention!
+1. Specified string representation of the model; the item we want to return when we convert a UserProfile Obj into a string in python. 
+- `Note`: `__str__(self)` is recommended for all django models, otherwise when you convert it to a string you won't return a meaningful output, so specify this function and return the field you want to use to identify this model.
 
 
 
