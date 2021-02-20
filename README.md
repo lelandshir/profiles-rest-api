@@ -30,6 +30,13 @@
 1. Install [Virtualbox](https://www.virtualbox.org/wiki/Downloads) (OS X hosts)
 1. Install [Vagrant](https://www.vagrantup.com/downloads) (MAC OS X); Check In terminal with `vagrant --version` to See something like `Vagrant 2.2.14`
 1. Install [ModHeader](https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en)
+1. Setup Python for VS Code (MacOS 2020)
+- download latest version of python [python](https://www.python.org/downloads/)
+- In VS Code go to extensions and search for `python` and install the extension w/ the most installations 
+- Get execuable path for python: Open a new Terminal, run `python3` and `import sys` (system module which can print the executable path by typing, `print(sys.executable)`, copy that path
+- In VS Code go to `Code, Preferences, Settings`: open the `settings.json` by clicking the file icon in the top right corner of the VSC (`.vscode/settings.json`)
+- add the bottom of the file add `"python.pythonPath": "/Library/Frameworks/Python.framework/Versions/3.9/bin/python3"` and save the file
+- Install the Python Linter when prompted by VS Code and run a python script to test
 
 #### Create Git Project
 
@@ -156,23 +163,72 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 - `Required`: Django needs to have a custom model manager for the user model so it knows how to create and control users using the django command line tools
 - The Django CLI provided command, `create-super-user`, makes it very easy to add super users to the system. A super user is an admin user with full control and accessibilty to the Django Admin and see all models in the DB
 - Since the User Model was customized, you need to tell Django how to interact with the model to create instances of users where we no longer ask for a username (the default expectation), but instead an email (the change made in the class)
-- `Note`: PEP guidelines ask that two spaces separate classes and imports [More Here](https://www.python.org/dev/peps/pep-0008/)
+- The way managers work is you specify functions within the manager made to manipulate objects within the model that the manager is for 
+- `Note`: PEP guidelines ask that two spaces separate classes [More Here](https://www.python.org/dev/peps/pep-0008/)
 
 - In `models.py`:
-Above the UserProfile class:
+2 spaces above the UserProfile class:
 ```
-class UserProfileManager()
+from django.contrib.auth.models import BaseUserManager
+
+class UserProfileManager():
+    """Manager for user profiles"""
+    def create_user(self, email, first_name, last_name, password=None):
+        """Create a new user profile"""
+        if not email:
+            raise ValueError('Whoa there! You need an email address!')
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, first_name=first_name, last_name=last_name)
+        
+        user.set_password(password)
+        user.save(using=self._db)
+        
+        return user
+
+    def create_superuser(self, email, first_name, last_name, password):
+        """Create and save a new superuser with given details"""
+        user = self.create_user(email, first_name, last_name, password)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+
+        return user
 ```
-Then...
-`from django.contrib.auth.models import BaseUserManager`
-
-
-
-
 
 #### Explaining The Code:
 1. Created UserProfileManager class
 1. Imported `BaseUserManager` because we want to inherit from the default user manager in Django
-1. 
+1. Specified BaseUserManager as a parent class
+1. Defined create_user function; for creating users with the Django CLI tool 
+1. Provided a check to make sure an email value has been provided 
+1. Normalized email address, makes second half of email address lower case - best practice
+1. create user model - this creates a user model that the user manager is representing with `self.model` and sets the new object with the email and the name
+1. Used the set_password function that comes w/ user model to encrypt the password and set it to a hash to protect against hackers/web crawlers (they can still reverse engineer if given enoug time, but this is best practice)
+1. Saved the user, and passed in the DB to save the object to (described in Django docs)
+1. Returned the user
+1. Created super user and passed in self, ...x
+1. We set `is_superuser = True` which is a BooleanObject auto provided by the permissions mixin
+
+#### Set custom user model
+- Configure Django Project to use the user model we created as the default user model as opposed to the one provided by Django
+1. Set the User Model in `settings.py`. Scroll to the bottom and create a new line: 
+- `AUTH_USER_MODEL = 'profiles_api.UserProfile'` - Set this to the app we want to retriebe the model from and the name of the model to use. Tells Django to look at this app and find this model and use it for auth in the project. Note: AUST_USER_MODEL is set to a string value.
+
+#### Create Migrations and sync DB
+- Create a migration file for the models added to the project. 
+- Django manages the DB by creating a migration file that stores all steps required to make DB match Django models. 
+- Each time we change models or add additional models you need to change the migration file; it will contain the steps required to modify the DB to match the updated models 
+- `Example`: If you add a new model to the project, then you need to be able to create a new table in the DB. This is done via a migration
+- You can create migrations with the Django Command Line Tool: 
+1. cd to the root of the project directory and connect to vagrant dev server: `vagrant ssh`
+1. cd into the `/vagrant` directory and activate virtual environment: `source ~/env/bin/activate`
+1. Use the `manage.py` file to create migrations: `python manage.py makemigrations profiles_api`
+1. This creates a new migration file in the project for the userProfile model; we shuold not have to modify these files
+1. Now run the migration: `python manage.py migrate` - this runs all migrations in the project
+1. Goes through Django Project and creates all required models/tables in the DB for any models and dependenices you have
+- That is how you create and manage changes 
+
+
 
 ## Profiles REST API
