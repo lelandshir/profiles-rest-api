@@ -145,7 +145,6 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 #### Explaining The Code:
 1. Created a UserProfile class and passed in the `AbstractBaseUser` and `PermissionsMixin` which allow customization of the default Django User Model as needed; then defined the required fields for the model. Note that `email` and `name` will become columns on the UserProfile Database Table.
 1. Added fields for the permissions system; `is_active` (allows us to deactivate users if needed), and `is_staff` (to determine if user is a staff user which determines access level).
-1. Required: Django needs to have a custom model manger for the user model so it knows how to create and control users using the django command line tools
 1. Specified a `USERNAME` field because we are overriding the `USERNAME` field by having users provide their email address and password when being authenticated rather than their username and password. The USERNAME field is required by default, we've simply switched it to be the email that is required instead. 
 1. Specified additional `REQUIRED_FIELDS` list and added `name`. This says that at minimum the user must also give their name.
 1. Added functions that are used for django to interact with the custom user model; "getters". 
@@ -153,7 +152,27 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 1. Specified string representation of the model; the item we want to return when we convert a UserProfile Obj into a string in python. 
 - `Note`: `__str__(self)` is recommended for all django models, otherwise when you convert it to a string you won't return a meaningful output, so specify this function and return the field you want to use to identify this model.
 
+#### Add A User Model Manager 
+- `Required`: Django needs to have a custom model manager for the user model so it knows how to create and control users using the django command line tools
+- The Django CLI provided command, `create-super-user`, makes it very easy to add super users to the system. A super user is an admin user with full control and accessibilty to the Django Admin and see all models in the DB
+- Since the User Model was customized, you need to tell Django how to interact with the model to create instances of users where we no longer ask for a username (the default expectation), but instead an email (the change made in the class)
+- `Note`: PEP guidelines ask that two spaces separate classes and imports [More Here](https://www.python.org/dev/peps/pep-0008/)
+
+- In `models.py`:
+Above the UserProfile class:
+```
+class UserProfileManager()
+```
+Then...
+`from django.contrib.auth.models import BaseUserManager`
 
 
+
+
+
+#### Explaining The Code:
+1. Created UserProfileManager class
+1. Imported `BaseUserManager` because we want to inherit from the default user manager in Django
+1. 
 
 ## Profiles REST API
