@@ -230,9 +230,32 @@ class UserProfileManager():
 - That is how you create and manage changes 
 
 ### 6. Setup Django Admin
+
 - Enable the Django Adminon the project. A useful tool that lets you create an admin site for your project where you can inspect, manage and see your DB models
-- You need to create a super user to do this, using the Command Line Tool
 
+#### Create Superuser
+1. You need to create a super user to do this, using the Command Line Tool, run: `python manage.py createsuperuser`
+1. You'll be prompted for email, name, and password to create a superuser successfully
 
+#### Enable Django Admin
+- By default the admin is enabled on all new projects, but newly created models must be registered with the admin so it knows you want to display that model in the admin interface
+1. In `admin.py`:
+```
+from profiles_api import models
 
-## Profiles REST API
+admin.site.register(models.)
+```
+
+#### Explaining the Code
+1. import your models from your project 
+1. Register models - this tells Django Admin to register UserProfile mdoel w/ admin site so it makes it accessible through the admin interface
+
+#### Test The Django Admin
+1. start the dev server: `python manage.py runserver 0.0.0:8000` (may need `--noreload`)
+1. head to `http://127.0.0.1:8000/admin` and log in with the superuser credentials created 
+- `Note`: I had a development environment issue in which the Vagrant server kept refreshing the files from my local machine when starting the python server: The `--noreload` flag sufficed!
+1. Each section represents a different app in the project; 
+- authtoken app is added from django rest framework when enabling tokens
+- auth and autho is out-the-box with django and allows you to use the auth system
+- then there's the app you created and the model registered
+- Django looks at the camel cased class we defined and generates the nae that way
