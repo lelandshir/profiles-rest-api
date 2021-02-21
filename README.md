@@ -237,7 +237,7 @@ class UserProfileManager():
 1. You need to create a super user to do this, using the Command Line Tool, run: `python manage.py createsuperuser`
 1. You'll be prompted for email, name, and password to create a superuser successfully
 
-#### Enable Django Admin
+#### Enable the Django Admin on this Project
 - By default the admin is enabled on all new projects, but newly created models must be registered with the admin so it knows you want to display that model in the admin interface
 1. In `admin.py`:
 ```
@@ -253,9 +253,137 @@ admin.site.register(models.)
 #### Test The Django Admin
 1. start the dev server: `python manage.py runserver 0.0.0:8000` (may need `--noreload`)
 1. head to `http://127.0.0.1:8000/admin` and log in with the superuser credentials created 
-- `Note`: I had a development environment issue in which the Vagrant server kept refreshing the files from my local machine when starting the python server: The `--noreload` flag sufficed!
 1. Each section represents a different app in the project; 
 - authtoken app is added from django rest framework when enabling tokens
 - auth and autho is out-the-box with django and allows you to use the auth system
 - then there's the app you created and the model registered
-- Django looks at the camel cased class we defined and generates the nae that way
+- Django looks at the camel cased singular class we defined and generates the name that way; it adds the `s` to the end becase it makes sense that there will be several created
+- The model will show the super user created; the hashed password is shown and the last login along with fields available in the model
+- commit!
+
+- `Server Error Note`: I had a development environment issue in which the Vagrant server kept refreshing the files from my local machine when starting the python server: The `--noreload` flag sufficed!
+
+### 7. Intro To API Views
+- DRF offers helper classes used to help create API endpoints: APIView and Viewset
+
+#### What is an APIView
+- APIView is the most basic type of view you can use to build your API  
+- Enables you to describe logic to make API endpoints; allows us to customize the standard HTTP methods for functions: `GET, POST, PUT, PATCH, and DELETE` 
+- Perfect for implementing complex logic, calling other APIs, and working with local files
+
+#### When to use APIViews
+- When you need full control over the logic
+- Processing files and rendersing a synchronous response 
+- When calling other APIs/services
+- Accessing local files or data
+
+#### Create first APIView
+In `views.py`:
+- remove all contents of the file
+```
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+
+class HelloApiView(APIView):
+    """Test API View"""
+    def get(self, request, format=None):
+        """Returns a list of APIViews features"""
+        an_apiview = [
+            'Uses HTTP methods as function (get, post, patch, put, delete)',
+            'Is similar to a traditional Django View',
+            'Gives you the most control over your app logic',
+            'Is mapped manually to URLs',
+        ]
+
+        return Response({'message':'Hello', 'an_apiview': an_apiview})
+```
+
+#### Explaining the code:
+- APIViews are broken up by expecting a function for each HTTP request made to the View; each function is expected to return a response that it will output when the API is called
+1. imported standard response object expected to be returned when making an API call, and the APIView class from rest framework.views module 
+1. Created a new class based on theAPIView class, allows you to define app logic for the endpoint assigned to this view; defined a endpoint-url and assigned it to this view, Django handles it by calling the correct function in the view for the HTTP request made
+1. defined `get` method - retreives a single obj or list of obj; when request is made to the View the logic in the function will execute; The `parameters`: `self` (required for all functions), `request` obj (passed in by DRF and contains details about the request) and `format` used to add a format suffix to the end of the endpoint-URL
+1. Defined a list to demonstrate returning an obj in your APIView; DRF expects HTTP functions to return a response obj that will outputted when the API is called. It converts the response obj into JSON; In order to do so the response must contain either a `dictionary {}` or a `list []` 
+1. Returned a dictionary; passed in the created list as the value of 'an_apiView' key
+
+#### Configure View URL
+- The entry point for all URLS in your app is in a list called `urlpatterns` in the `urls.py` file in the root of the project (created by default when creating a Django project) 
+- Example: When heading to `/admin`, Django looks up the `urls.py` file and matches it with the first url it finds. It detects the urls for the admin site which connects that url to the admin app (Django default)
+- You can store urls for your API by creating a similar `urls.py` file in the root of your app folder, then including that new `urls.py` file in the `urlpatterns` list of the root project urls
+
+1. `touch profiles_api/urls.py`
+1. In `profiles_project/urls.py` 
+
+```
+from django.urls import path, include 
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('profiles_api.urls'))
+]
+```
+
+#### Explaining the code
+1. added include to imports in the project urls, a function used to include urls from other apps
+1. added a new path to the list, passed into `include` the app and the module that contains the urls; save. Now the `event loop`: going to `/api` on the server will pass in the request to the django app, which will look into urlpatterns and fin the first item in the list that matches `/api`.  It will then pass in all the urls that match that url and load up the sub urls in `urls.py`. So `/api` is the prefix to the sub-urls.
+
+#### Map A URL to an APIView in Django:
+1. In `profiles_api/urls.py`:
+```
+from django.urls import path
+
+from profiles_api import views
+
+urlpatterns = [
+    path('hello-view', views.HelloApiView.as_view)
+]
+```
+
+#### Explaining the code
+1. import the path function and the views module which will contain the APIView
+1. Created list of paths that map to views: `path('name-of-url', map-to-views.HelloAPIView.call as_view() on the APIViews class)`. 
+- Now when the web server address, `/api/hello-view` is accessed, it will call the `views.HelloApiView.as_view()` which is the standard function called to render the appropriate return from the APIView. So making a get request will trigger the get method in the APIView.
+
+#### Test the APIView in the Browser
+- `Note`: May need to restart the server
+- In Chrome head to trigger the Django Dispatcher: `127.0.0.1:8000/api/hello-view/` to see the output returned from the response of the `views.py` `HelloApi` view
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
