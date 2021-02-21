@@ -433,9 +433,16 @@ class HelloApiView(APIView):
 
 #### Test PUT/PATCH/DELETE
 - Delete to see the delete response, and likewise for PUT
-- for the PATCH method: use `raw` data - we provide only the fields to be updated as a json string in the editor: `{"someKey":"someValue"}`
+- For the PATCH method: use `raw` data - we provide only the fields to be updated as a json string in the editor: `{"someKey":"someValue"}`
 
+### 7. Intro to View Sets:
 
+##### Objectives:
+- What a Viewset is
+- Create a simple viewset
+- Add URL Router
+- Add create, retrieve, update, partial_update, and destroy functions
+- Test Viewset
 
 
 
