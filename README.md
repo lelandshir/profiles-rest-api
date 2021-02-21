@@ -349,14 +349,91 @@ urlpatterns = [
 - `Note`: May need to restart the server
 - In Chrome head to trigger the Django Dispatcher: `127.0.0.1:8000/api/hello-view/` to see the output returned from the response of the `views.py` `HelloApi` view
 
+#### Create A Serializer
+- A serializer is feaure from the DRF that allows you to easily convert data inputs into python objects and vice-versa
+- Similar to Django forms with various fields foro an API
+- A serializer is necessary for POST and UPDATE functionality so that we can recieve the content
+- Best practice to keep all serializers in one file for easy finding
+- serializers also take care of validation rules
+1. `touch profiles_api/serializers.py`
+1. In 1. `serializers.py`:
+```
+from rest_framework import serializers
+
+class HelloSerializer(serializers.Serializer):
+    """Serializez a name field for testing our APIView"""
+    first_name = serializers.CharField(max_length=10)
+```
+
+#### Explaining the code
+1. Imported serializers from DRF
+1. create a new class based on the serializers class in the DRF
+1. added a first_name field for testing a POST METHOD
 
 
+#### Add POST method to APIView
+1. In `views.py`:
+```
+from rest_framework import status
+from profiles_api import serializers
+
+class HelloApiView(APIView):
+    """Test API View"""
+    serializer_class = serializers.HelloSerializer
 
 
+    def get(self, request, format=None):
+        """Returns a list of APIViews features"""
+        ...
 
+    def post(self, request):
+        """Create a hello message w/ your name"""
+        serializer = self.serializer_class(data=request.data)
 
+         if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}!'
+            return Response({'message': message})
+         else: 
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST 
+                )
+            
+```
 
+#### Explaining the code
+1. Imports: status, a list of handy HTTP status codes you can use when returning responses from the API. Serializers module you created to tell the APIView what data to expect when making PUT, POST, and PATCH requests to the API
+1. Set the serialzier; configured the APIView to have the serializer class you created, "When you're sending a POST PUT or PATCH req expect an input with a name that has a max length of 10 characters
+1. Write the Post Function that creates a hello message with our name when the API recieves a post request
+1. Retrieve the serializer with the `self.serializer_class()` function, which comes w/ the APIView and retreives the configured serialzer class for your view. It's the standard way to retrieve the serializer_class when working with serializers in a view. When making a post request to the API, the data gets passed in as `request.data` (apart of the request object). We assign this data to the serializer class, then created a new variable for the class called `serializer`
+1. Validated the serialzer using the is_valid() method off the serialzer class; you can retrieve all fields defined in the serialzer this way
+1. Created a message returned from the API that contains the name contained in the post request using f'string {name}' - this lets you insert a variable into a string. This what is returned when a request is valid, if it is not there's the else statement. It is good practice to implement error handling so that those using the API know what went wrong when getting an error.
+1. Else return a response (changing to a 400-Bad Request, from the default 200-OK Request) by retrieving the dictionary of errors from the serialzers. Good practice to use the status to return messages so that there is more information.
 
+#### Test Post Function in Browser
+1. Head to `/api/hello-view/` and refresh the page to see the name field appear at the bottom due to adding a serializer and post function. Now the API knows we're exepcting a name and gives us a place to input it. See the errors as well.
+
+#### Add Put, PATCH, & DELETE methods
+1. In `views.py`:
+```
+    def put(self, request, pk=None):
+        """Handle updating an obj"""
+        return Response({'method': 'PUT'})
+
+    def patch(self, request, pk=None):
+        """Handle a partial update of an obj"""
+        return Response({'method': 'PATCH'})
+
+    def delete(self, request, pk=None):
+        """Delete an obj"""
+        return Response({'method': 'DELETE'})
+```
+- `Note`: When doing a PUT you do it to a specific URL primary key/to a specific ID you are updating. Setting the primary key to `None` is something you can do if you don't want to use primary keys in your API. For now usinf `None`.
+
+#### Test PUT/PATCH/DELETE
+- Delete to see the delete response, and likewise for PUT
+- for the PATCH method: use `raw` data - we provide only the fields to be updated as a json string in the editor: `{"someKey":"someValue"}`
 
 
 
