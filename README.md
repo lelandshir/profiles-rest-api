@@ -573,7 +573,14 @@ def create(self, request):
 ```
 
 #### Explaining the code
-1. Added create, retrieve, update, partial_update, and destroy methods. These map to the different http_methods.
+1. Added create, retrieve, update, partial_update, and destroy methods. These map to the different http methods.
+1. Test the Viewset in the browser, just like before
+
+#
+
+### 9. Create Profiles API
+
+
 
 
 
