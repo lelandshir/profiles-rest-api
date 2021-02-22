@@ -481,11 +481,26 @@ from rest_framework import viewsets
         ...
 
 class HelloViewSet(viewsets.ViewSet):
+	  """Test API ViewSet"""
+    serializer_class = serializers.HelloSerializer
+
+    def list(self, request):
+        """Return hello message"""
+        a_viewset = [
+            'Uses actions ()',
+            'Auto-maps to URLS using routers',
+            'Provides more functionality w/ less code',
+        ]
+
+        return Response({'message': 'Hello!', 'a_viewset': a_viewset})
 ```
 
 #### Explaining the code
 1. Imported viewsets
 1. Underneath the HelloApiView class, defined a class Hello ViewSet and based it on the viewsets.ViewSet, the base ViewSet class that Django provides
+1. Brought in the serializer class to validate the request obj 
+1. defined a list function designed to return a message and list we created 
+
 
 #### Create a Router and Register a New ViewSet with it
 1. In `urls.py`:
@@ -514,8 +529,51 @@ urlpatterns = [
 	* third argument: specify base_name for retrieving the url in the router if needed via url-retrieving function provided by Django
 1. Add a new path to `urlpatterns` using the `include` function passing in `router.urls`. As you register new routes with the router, it generates a list of urls associated with the viewset. It figures out the urls required for all functionas added to viewset and generates this list we can pass in. We use a blank string because we don't want a prefix to this url.
 
+#### Test The ViewSet
+1. In terminal: run the Vagrant server, `vagrant up`, connect to it, `vagrant ssh`, cd into the `/vagrant` directory, then activate the virtual environment `source ~/env/bin/activate`, finally start the django development server, `python manage.py runserver 0.0.0:8000 `
+1. Head to `http://127.0.0.1:8000/api/` to head to the root of the API. The page looks different. Router has a core function where it adds browsable API for all other items registered to the router, but doesn't include API views or urls registered directly to urlspattern. Only things registered via the router, a limitation of this feature in the DRF
+1. When we access this url we do an HTTP GET to the base of the registered view which will take you to the list function that will execute the code and return that response 
 
 
+1. In `views.py`:
+```
+...
+	return Response({'message': 'Hello!', 'a_viewset': a_viewset})
+
+
+def create(self, request):
+        """Create a new hello msg"""
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}!'
+            return Response({'message': message})
+        else: 
+            return Response(
+                serializer.erros,
+                status=status.HTTP_400_BAD_REQUEST
+            ) 
+
+    def retrieve(self, request, pk=None):
+        """Handle getting an obj by ID"""
+        return Response({'http_method': 'GET'})
+
+    def update(self, request, pk=None):
+        """Handle updating an obj"""
+        return Response({'http_method': 'PUT'})
+
+    def partial_update(self, request, pk=None):
+        """Handle updating part of an obj"""
+        return Response({'http_method': 'PATCH'})
+
+    def destroy(self, request, pk=None):
+        """Handle removing an obj"""
+        return Response({'http_method': 'DELETE'})
+```
+
+#### Explaining the code
+1. Added create, retrieve, update, partial_update, and destroy methods. These map to the different http_methods.
 
 
 
