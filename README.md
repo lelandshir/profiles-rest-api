@@ -5,6 +5,8 @@
 - Python | Django 2.2 | Django REST Framework 3.9 | Vagrant | VirtualBox | ModHeaders
 - Deploy dev server to AWS
 
+#
+
 ### 1. Development Server Notes:
 
 #### Vagrant
@@ -22,6 +24,8 @@
 1. Django REST Framework, provides a set of features for making standard REST APIs
 
 `Tools:` IDE, Git, & ModHeaders: a Chrome Extension for easily modifying HTTP Headers when testing an API
+
+#
 
 ### 2. Set Up Development Environment
 
@@ -50,6 +54,8 @@
 1. `cat ~/.ssh/id_rsa.pub` to grab key and head to gitHub to add it.
 1. Create a new repo on github, and `git remote add origin <url>` to configure path, then `git branch -M main` to configure a `main` branch, then `git push -u origin main`
 
+#
+
 ### 3. Creating Development Server
 
 #### Create A Vagrant File
@@ -64,6 +70,8 @@
 
 1. Once the VM is created, connect to it: `vagrant ssh` command using ssh, disconnect from the machine by typing `exit`
 1. The dev server is a Virtual Machine, by default the file system is not sync'd. Files on the Dev Server are different from the files on the local machine. Vagrant creates a sync'd directory on our the Vagrant server that updates itself every time changes are made to files.
+
+#
 
 ### 4. Creating A Django App
 
@@ -109,6 +117,7 @@
 1. ctrl + C to stop the server
 1. Commit Changes
 
+#
 
 ### 5. Django Models
 1. Models describe the data we need for the app, Django uses these models to set up and configure the db to store data properly
@@ -229,6 +238,8 @@ class UserProfileManager():
 1. Goes through Django Project and creates all required models/tables in the DB for any models and dependenices you have
 - That is how you create and manage changes 
 
+#
+
 ### 6. Setup Django Admin
 
 - Enable the Django Adminon the project. A useful tool that lets you create an admin site for your project where you can inspect, manage and see your DB models
@@ -262,6 +273,8 @@ admin.site.register(models.)
 - commit!
 
 - `Server Error Note`: I had a development environment issue in which the Vagrant server kept refreshing the files from my local machine when starting the python server: The `--noreload` flag sufficed!
+
+#
 
 ### 7. Intro To API Views
 - DRF offers helper classes used to help create API endpoints: APIView and Viewset
@@ -435,9 +448,9 @@ class HelloApiView(APIView):
 - Delete to see the delete response, and likewise for PUT
 - For the PATCH method: use `raw` data - we provide only the fields to be updated as a json string in the editor: `{"someKey":"someValue"}`
 
-### 
+# 
 
-### 7. Intro to View Sets:
+### 8. Intro to View Sets:
 
 ##### Objectives:
 - What a Viewset is
