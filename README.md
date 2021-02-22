@@ -435,6 +435,8 @@ class HelloApiView(APIView):
 - Delete to see the delete response, and likewise for PUT
 - For the PATCH method: use `raw` data - we provide only the fields to be updated as a json string in the editor: `{"someKey":"someValue"}`
 
+===
+
 ### 7. Intro to View Sets:
 
 ##### Objectives:
@@ -444,7 +446,8 @@ class HelloApiView(APIView):
 - Add create, retrieve, update, partial_update, and destroy functions
 - Test Viewset
 
-
+#### What is a ViewSet
+- Similar to views, they help us write logic for endpoints 
 
 
 
