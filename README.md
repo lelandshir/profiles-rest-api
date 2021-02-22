@@ -460,27 +460,59 @@ class HelloApiView(APIView):
 - Test Viewset
 
 #### What is a ViewSet
-- Similar to views, they help us write logic for endpoints 
+- Similar to views, they help us write logic for endpoints. Rather than functions that map to HTTP methods, Viewsets accept functions that map to common API object ations; list, create, retrieve a sepcific obj, update, partial update, destroy
+- They take care of common logic for you, are perfect for standard DB operations, Fastest way to make a DB interface
 
+#### When to use ViewSets?
+- A simple CRUD interface to your DB
+- A quick and simple API
+- Little to no customization on the logic
+- Working with standard data structures
 
+#### Create A Simple Viewset
+1. In `views.py`:
+```
+from rest_framework import viewsets
 
+...
+	def delete(self, request, pk=None):
+        """Delete an obj"""
+        return Response({'method': 'DELETE'})
+        ...
 
+class HelloViewSet(viewsets.ViewSet):
+```
 
+#### Explaining the code
+1. Imported viewsets
+1. Underneath the HelloApiView class, defined a class Hello ViewSet and based it on the viewsets.ViewSet, the base ViewSet class that Django provides
 
+#### Create a Router and Register a New ViewSet with it
+1. In `urls.py`:
+```
+from django.urls import path, include
 
+from rest_framework.routers import DefaultRouter
 
+from profiles_api import views
 
+router = DefaultRouter()
+router.register('hello-viewset', views.HelloViewSet, base_name='hello-viewset')
 
+urlpatterns = [
+    path('hello-view/', views.HelloApiView.as_view()),
+    path('', include(router.urls))
+]
+```
 
-
-
-
-
-
-
-
-
-
+#### Explaining the code
+1. imported the include function after the path import, used for including lists of urls in the urlpattern and assigning the list to a specific url.
+* import the default router, assign it to a variable
+	* use `router.register` to register specific viewsets with the router; 
+	* first arg is the name of the url you want to create. Router defines urls for you so no need to specifiy any forward slashes `/` when creating viewset url name
+	* second arg is the viewset that you wish to register w/ the url
+	* third argument: specify base_name for retrieving the url in the router if needed via url-retrieving function provided by Django
+1. Add a new path to `urlpatterns` using the `include` function passing in `router.urls`. As you register new routes with the router, it generates a list of urls associated with the viewset. It figures out the urls required for all functionas added to viewset and generates this list we can pass in. We use a blank string because we don't want a prefix to this url.
 
 
 
